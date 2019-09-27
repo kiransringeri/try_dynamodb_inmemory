@@ -244,39 +244,4 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-	<!-- <profiles>
-		<profile>
-            <id>start-dynamodb-local</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>${exec.maven.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <phase>initialize</phase>
-                                <configuration>
-                                    <executable>java</executable>
-                                    <arguments>
-                                        <argument>-cp</argument>
-                                        <classpath/>
-                                        <argument>-Dsqlite4java.library.path=${basedir}/target/dependencies</argument>
-                                        <argument>com.amazonaws.services.dynamodbv2.local.main.ServerRunner</argument>
-                                        <argument>-inMemory</argument>
-                                        <argument>-port</argument>
-                                        <argument>8000</argument>
-                                    </arguments>
-                                </configuration>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-	</profiles>
-	-->
 </project>
