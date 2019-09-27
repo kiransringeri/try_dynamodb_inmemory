@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" 
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	version="EE-3.9.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dynamodb="http://www.mulesoft.org/schema/mule/dynamodb"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+	http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	http://www.mulesoft.org/schema/mule/dynamodb http://www.mulesoft.org/schema/mule/dynamodb/current/mule-dynamodb.xsd
+	">
+	
+	<!-- This config is kept in separate file because we override this from MUnit tests -->
+	<dynamodb:config name="DynamoDBConnector"  doc:name="DynamoDBConnector"
+    				accessKey="Your Actual Access Key" 
+    				secretKey="Your Actual Secret Key" 
+    				region="EU_WEST_1" />
+    								    				
+</mule>

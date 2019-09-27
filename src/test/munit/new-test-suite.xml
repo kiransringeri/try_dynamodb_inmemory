@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule 
+	xmlns="http://www.mulesoft.org/schema/mule/core" 
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" 
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:core="http://www.mulesoft.org/schema/mule/core" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+	xmlns:dynamodb="http://www.mulesoft.org/schema/mule/dynamodb"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/dynamodb http://www.mulesoft.org/schema/mule/dynamodb/current/mule-dynamodb.xsd
+">
+    <munit:config name="munit" doc:name="MUnit configuration"/>
+    
+    <dynamodb:config name="DynamoDBConnector"  doc:name="DynamoDBConnector"
+    				accessKey="doesn't matter" 
+    				secretKey="doesn't matter" 
+    				useLocalInstanceWithPort="8001"
+    				region="EU_WEST_1" />
+    				    				
+    <spring:beans>
+    		<!-- Exclude the file which has "dynamodb:config" defined -->
+        <spring:import resource="classpath:try_dynamodb_inmemory.xml"/>
+    </spring:beans>
+    
+    <munit:before-suite name="new-test-suiteBefore_Suite" description="MUnit Test">
+    		<logger level="INFO" message="Inside munit:before-suite"/>
+    		<scripting:component doc:name="Groovy">
+			<scripting:script engine="Groovy"><![CDATA[
+				com.test.DynamoDBUtil.startServer();
+			]]></scripting:script>
+		</scripting:component>
+    </munit:before-suite>
+    
+    <munit:after-suite name="new-test-suiteAfter_Suite" description="MUnit Test">
+    		<logger level="INFO" message="Inside munit:before-suite"/>
+    		<scripting:component doc:name="Groovy">
+			<scripting:script engine="Groovy"><![CDATA[
+				com.test.DynamoDBUtil.stopServer();
+			]]></scripting:script>
+		</scripting:component>
+    </munit:after-suite>
+    
+    <munit:test name="new-test-suite-test-flow-1Test" description="Test">
+    		<logger level="INFO" message="Inside new-test-suite-test-flow-1Test"/>
+        <flow-ref name="test-flow-1"/>
+        <munit:assert-true message="Test Failed" condition="#[payload == 'ACTIVE']"/>
+    </munit:test>
+    
+</mule>

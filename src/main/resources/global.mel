@@ -1,0 +1,386 @@
+//Global MEL functions
+function person_createRecordForId() {
+
+	if (message.payload instanceof com.pfizer.qcircle.model.Person){
+	
+		com.pfizer.qcircle.model.Person person = (com.pfizer.qcircle.model.Person)message.payload;
+	    if (person.getJanrainId()!=null) {
+		   person.setId(person.getJanrainId());
+		}else {
+			person.setId(UUID.randomUUID().toString());
+			person.setJanrainId(person.getId());
+		}
+		person.setCreateTime(flowVars['currentDateTime']);
+		person.setLastModifiedTime(flowVars['currentDateTime']);
+		person.setIsActive(true);
+		person.setQuitterRegCode(RandomStringUtils.randomAlphanumeric(8).toUpperCase());
+		person.setEmailBase64(message.getOutboundProperties().get('EmailBase64'));
+		
+		payload = person;
+	}	
+	return payload;	
+}
+function person_updateRecordForId() {
+
+	if (message.payload instanceof com.pfizer.qcircle.model.Person) {
+	
+		com.pfizer.qcircle.model.Person person = (com.pfizer.qcircle.model.Person)message.payload;
+		person.setId(flowVars['id']);
+		person.setJanrainId(flowVars['id']);
+		if (flowVars['createdTimestamp']!=null){
+			person.setCreateTime(flowVars['createdTimestamp']);
+		}else{
+			person.setCreateTime(flowVars['currentDateTime']);
+		}
+		person.setLastModifiedTime(flowVars['currentDateTime']);
+		person.setEmailBase64(message.getOutboundProperties().get('EmailBase64'));		
+		payload = person;
+	}	
+	return payload;	
+}
+function event_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.Event){
+	
+		com.pfizer.qcircle.model.Event eventItem = (com.pfizer.qcircle.model.Event)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars['eventUUID'])) {
+			eventItem.setEventId(flowVars['eventUUID']);
+		} else {
+			eventItem.setEventId(flowVars['id']);
+		}					 
+		eventItem.setCreateTime(flowVars['currentDateTime']);
+		eventItem.setIsActive(true);
+		eventItem.setGroupId(null);
+
+		if ((eventItem.getAttributes()!=null) && (eventItem.getEventType()!=null)){
+		if (eventItem.getAttributes().get("recipientList")!=null){
+			if (app.registry['eventTypeNameListBean'].contains(eventItem.getEventType())) {
+				eventItem.setGroupId(eventItem.getEventId());
+			}
+		}}
+		payload = eventItem;
+	}
+	return payload;	
+}
+function eventType_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.EventType){
+	
+		com.pfizer.qcircle.model.EventType eventTypeItem = (com.pfizer.qcircle.model.EventType)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars['eventTypeUUID'])) {
+			eventTypeItem.setId(flowVars['eventTypeUUID']);
+		} else {
+			eventTypeItem.setId(flowVars['id']);
+		}					 
+		if (flowVars['createdTimestamp']!=null){
+			eventTypeItem.setCreateTime(flowVars['createdTimestamp']);
+		}else{
+			eventTypeItem.setCreateTime(flowVars['currentDateTime']);
+		}
+		eventTypeItem.setIsActive(true);
+		payload = eventTypeItem;
+	}
+	return payload;	
+}
+function asset_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.Asset){
+	
+		com.pfizer.qcircle.model.Asset assetItem = (com.pfizer.qcircle.model.Asset)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars["assetUUID"])) {
+			assetItem.setId(flowVars['assetUUID']);
+		} else {
+			assetItem.setId(flowVars['id']);
+		}					 
+		if (!org.mule.util.StringUtils.isEmpty(flowVars["assettypeid"])) {
+			assetItem.setType(flowVars['assettypeid']);
+		}
+		if (flowVars['createdTimestamp']!=null){
+			assetItem.setCreateTime(flowVars['createdTimestamp']);
+		}else{
+			assetItem.setCreateTime(flowVars['currentDateTime']);
+		}
+		assetItem.setUpdatedTime(flowVars['currentDateTime']);
+		assetItem.setIsActive(assetItem.getIsActive());
+		payload = assetItem;
+	}
+	return payload;	
+}
+function assetType_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.AssetType){
+	
+		com.pfizer.qcircle.model.AssetType assetType = (com.pfizer.qcircle.model.AssetType)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars['assetTypeUUID'])) {
+			assetType.setId(flowVars['assetTypeUUID']);
+		} else {
+			assetType.setId(flowVars['id']);
+		}					 		
+		if (flowVars['createdTimestamp']!=null){
+			assetType.setCreateTime(flowVars['createdTimestamp']);
+		}else{
+			assetType.setCreateTime(flowVars['currentDateTime']);
+		}
+		assetType.setIsActive(true);
+		payload = assetType;
+	}
+	return payload;	
+}
+
+function person_createSuppoerterQuitterRecord() {
+	if (message.payload instanceof com.pfizer.qcircle.model.PersonSupporter){
+		com.pfizer.qcircle.model.PersonSupporter personSupporter = (com.pfizer.qcircle.model.PersonSupporter)message.payload;
+		personSupporter.setUserId(flowVars['id']);
+		personSupporter.setCreatedTimestamp(flowVars['currentDateTime']);
+		personSupporter.setIsActive(true);
+		if (flowVars['userExists'] != null && !(flowVars['userExists'] instanceof org.mule.transport.NullPayload)) {
+			personSupporter.setExistingIds(flowVars['userExists']['JsonPayload']);
+		}
+		payload = personSupporter;
+	}
+	return payload;
+}
+function instance_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.Instance){
+	
+		com.pfizer.qcircle.model.Instance instanceObject = (com.pfizer.qcircle.model.Instance)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars['instanceUUID'])) {
+			instanceObject.setId(flowVars['instanceUUID']);
+		} else {
+			instanceObject.setId(flowVars['id']);
+		}					 
+		if (flowVars['createdTimestamp']!=null){
+			instanceObject.setCreateTime(flowVars['createdTimestamp']);
+		}else{
+			instanceObject.setCreateTime(flowVars['currentDateTime']);
+		}
+		instanceObject.setIsActive(true);
+		payload = instanceObject;
+	}
+	return payload;	
+}
+function notification_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.Notification){
+	
+		com.pfizer.qcircle.model.Notification notificationObject = (com.pfizer.qcircle.model.Notification)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars['notificationUUID'])) {
+			notificationObject.setId(flowVars['notificationUUID']);
+		} else {
+			notificationObject.setId(flowVars['id']);
+		}					 
+		notificationObject.setCreateTime(flowVars['currentDateTime']);
+		notificationObject.setIsActive(true);
+		payload = notificationObject;
+	}
+	return payload;	
+}
+function notification_createRecordForUA() {
+	
+	com.pfizer.qcircle.model.Notification pushRecord = new com.pfizer.qcircle.model.Notification();
+	pushRecord.setId(message.id);
+	pushRecord.setCreateTime(flowVars['currentDateTime']);
+	pushRecord.setIsActive(false);
+	pushRecord.setName("UA-PUSH");
+	pushRecord.setDescription("PushMessage request for the UrbanAirship system");
+	java.util.Map attributes = new java.util.HashMap();
+	attributes.put("uaRequest", flowVars['_originalRequest']);
+	attributes.put("uaResponse", message.payload);
+	pushRecord.setAttributes(attributes);
+	payload = pushRecord;
+	return payload;	
+}
+function action_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.Action){
+	
+		com.pfizer.qcircle.model.Action actionObject = (com.pfizer.qcircle.model.Action)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars['actionUUID'])) {
+			actionObject.setId(flowVars['actionUUID']);
+		} else {
+			actionObject.setId(flowVars['id']);
+		}					 
+		if (flowVars['createdTimestamp']!=null){
+			actionObject.setCreateTime(flowVars['createdTimestamp']);
+		}else{
+			actionObject.setCreateTime(flowVars['currentDateTime']);
+		}
+		actionObject.setIsActive(true);
+		payload = actionObject;
+	}
+	return payload;	
+}
+function rule_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.Rule){
+	
+		com.pfizer.qcircle.model.Rule ruleObject = (com.pfizer.qcircle.model.Rule)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars['ruleUUID'])) {
+			ruleObject.setId(flowVars['ruleUUID']);
+		} else {
+			ruleObject.setId(flowVars['id']);
+		}					 
+		if (flowVars['createdTimestamp']!=null){
+			ruleObject.setCreateTime(flowVars['createdTimestamp']);
+		}else{
+			ruleObject.setCreateTime(flowVars['currentDateTime']);
+		}
+		ruleObject.setIsActive(true);
+		payload = ruleObject;
+	}
+	return payload;	
+}
+function ruleType_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.RuleType){
+	
+		com.pfizer.qcircle.model.RuleType ruletypeObject = (com.pfizer.qcircle.model.RuleType)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars['ruleTypeUUID'])) {
+			ruletypeObject.setId(flowVars['ruleTypeUUID']);
+		} else {
+			ruletypeObject.setId(flowVars['id']);
+		}					 
+		if (flowVars['createdTimestamp']!=null){
+			ruletypeObject.setCreateTime(flowVars['createdTimestamp']);
+		}else{
+			ruletypeObject.setCreateTime(flowVars['currentDateTime']);
+		}
+		ruletypeObject.setIsActive(true);
+		payload = ruletypeObject;
+	}
+	return payload;	
+}
+function dbParseQueryResponse() {
+	java.util.ArrayList queryResultList = new java.util.ArrayList(); 
+	if (message.payload instanceof org.mule.streaming.ConsumerIterator){
+		org.mule.streaming.ConsumerIterator it = (org.mule.streaming.ConsumerIterator)message.payload;
+		while(it.hasNext()) {
+			queryResultList.add(it.next());
+		}
+	}
+	return queryResultList;	
+}
+function matrix_createRangeKeyForDynamoDBQuery() {
+   java.util.ArrayList rangeKeyList = new java.util.ArrayList(); 
+   rangeKeyList.add(flowVars['eventsBeginTimeRange']); 
+   rangeKeyList.add(flowVars['matrixRunTime']);
+   return rangeKeyList;
+}
+function goal_createRangeKeyForDynamoDBQuery() {
+   java.util.ArrayList rangeKeyList = new java.util.ArrayList();
+   rangeKeyList.add(flowVars['marketoCustomObjectLastUpdated']); 
+   return rangeKeyList;
+}
+function matrix_createRangeKeyGetDocument() {
+   java.util.ArrayList rangeKeyList = new java.util.ArrayList(); 
+   rangeKeyList.add(flowVars['currentDateTime']);
+   return rangeKeyList;
+}
+function matrix_parseQueryResponse() {
+	if (message.payload instanceof org.mule.streaming.ConsumerIterator){
+		org.mule.streaming.ConsumerIterator it = (org.mule.streaming.ConsumerIterator)message.payload;
+		if(it.hasNext()) {
+			payload = it.next();
+		}
+	}
+	return payload;	
+}
+function contentCode_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.ContentCode){
+	
+		com.pfizer.qcircle.model.ContentCode contentItem = (com.pfizer.qcircle.model.ContentCode)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars["codeUUID"])) {
+			contentItem.setId(flowVars['codeUUID']);
+		} else {
+			contentItem.setId(flowVars['id']);
+		}					 
+		contentItem.setCreateTime(flowVars['currentDateTime']);
+		payload = contentItem;
+	}
+	return payload;	
+}
+function httpResponse_escapeJSON(exceptionMesg) {
+	return groovy.json.StringEscapeUtils.escapeJava(exceptionMesg); 
+}
+function dailyReport_createRangeKeyForDynamoDBQuery() {
+   java.util.ArrayList rangeKeyList = new java.util.ArrayList(); 
+   rangeKeyList.add("2015-05-15T00:01:01Z"); 
+   return rangeKeyList;
+}
+function matrix_createRecordForPerson(isBothType) {
+	
+	com.pfizer.qcircle.model.Matrix matrixRecord = new com.pfizer.qcircle.model.Matrix();
+	matrixRecord.setId(payload.janrainId);
+	matrixRecord.setCreateTime(flowVars['matrixCreatedTimestamp']);
+	matrixRecord.setIsActive(true);
+	matrixRecord.setReportType("Daily");
+	matrixRecord.setDaysSmokeFreeCount(0L);
+	matrixRecord.setDaysSmokeFreeContCount(0L);
+	matrixRecord.setGoalSetCount(0);
+	matrixRecord.setMoneySpentCount(0);
+	matrixRecord.setMoneySavedCount(0);
+	matrixRecord.setReportRuntime(payload.createTime);
+	matrixRecord.setLastCheckin(payload.createTime);
+	matrixRecord.setDaysOfActivity(1);
+	matrixRecord.setMemberSinceDays(0L);
+	matrixRecord.setIsQuitterSupporter(isBothType);
+	
+	payload = matrixRecord;
+	return payload;	
+}
+function person_updateJanrainUserRequest() {
+	java.util.Map requestPayload = new java.util.HashMap(); 
+	java.util.Map fieldAttributes = new java.util.HashMap(); 
+	fieldAttributes.put("marketoId", payload.marketoId);
+	fieldAttributes.put("quitterRegistrationCode", payload.quitterRegCode);
+	if (payload.attributes!=null){
+		java.util.Map fieldRole = new java.util.HashMap();
+		fieldRole.put("quitter", payload.attributes.isQuitter);
+		fieldRole.put("supporter", payload.attributes.isSupporter);
+		fieldAttributes.put("role", fieldRole);
+	}
+	requestPayload.put("quittersCircle", fieldAttributes);
+    return requestPayload;	
+}
+function tile_updateRecordForId() {
+	if (message.payload instanceof com.pfizer.qcircle.model.Tile){
+
+		com.pfizer.qcircle.model.Tile tileItem = (com.pfizer.qcircle.model.Tile)message.payload;
+		if (!org.mule.util.StringUtils.isEmpty(flowVars['tileUUID'])) {
+			tileItem.setId(flowVars['tileUUID']);
+		} else {
+			tileItem.setId(flowVars['id']);
+		}
+		tileItem.setCreateTime(flowVars['currentDateTime']);
+		tileItem.setUpdatedTime(flowVars['currentDateTime']);
+		tileItem.setIsActive(tileItem.getIsActive());
+		payload = tileItem;
+	}
+	return payload;
+}
+function tile_checkNameInList() {
+	tileRecordMap = [:];
+	foreach (tileRec : payload){
+		foreach(tileName : app.registry['tileNameListBean']){
+			if(tileRec.Id.startsWith(tileName)){
+				tileRecordMap.put(tileRec.Id, tileRec.CreatedTimestamp);
+			}
+		}
+	}
+	payload = tileRecordMap;
+	return payload;
+}
+function tile_checkNameInMapList() {
+	tileRecordMap = [:];
+	foreach (tileRec : payload){
+		foreach(tileName : app.registry['tileLetsDoItMapNameIdBean'].keySet()){
+			if(tileRec.Id.startsWith(tileName)){
+				tileRecordMap.put(tileRec.Id, tileRec.CreatedTimestamp);
+			}
+		}
+	}
+	payload = tileRecordMap;
+	return payload;
+}
+function tile_checkOnJournalTileInList() {
+	tileRecordMap = [:];
+	foreach (tileRec : payload){
+		if(tileRec.Id.startsWith(flowVars['journalTileName'])==false){
+			tileRecordMap.put(tileRec.Id, tileRec.CreatedTimestamp);
+		}
+	}
+	payload = tileRecordMap;
+	return payload;
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" 
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	version="EE-3.9.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dynamodb="http://www.mulesoft.org/schema/mule/dynamodb"
+	xmlns:json="http://www.mulesoft.org/schema/mule/json"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+	http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	http://www.mulesoft.org/schema/mule/dynamodb http://www.mulesoft.org/schema/mule/dynamodb/current/mule-dynamodb.xsd
+	http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+	">
+	
+	<flow name="test-flow-1">
+		<logger level="INFO" message="Inside test-flow-1. Payload=#[payload]"/>
+		<set-variable variableName="tableName" value="MyTable1"/>
+		<dynamodb:describe-table config-ref="DynamoDBConnector" tableName="#[flowVars.tableName]"/>
+		<logger level="INFO" message="Table description of #[flowVars.tableName]=#[payload]"/>
+	</flow>
+	
+</mule>
