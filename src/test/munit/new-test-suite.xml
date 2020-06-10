@@ -49,7 +49,7 @@ http://www.mulesoft.org/schema/mule/dynamodb http://www.mulesoft.org/schema/mule
     <munit:test name="new-test-suite-test-flow-1Test" description="Test">
     		<logger level="INFO" message="Inside new-test-suite-test-flow-1Test"/>
         <flow-ref name="test-flow-1"/>
-        <munit:assert-true message="Test Failed" condition="#[payload == 'ACTIVEXX']"/> 
+        <munit:assert-true message="Test Failed" condition="#[payload == 'ACTIVE']"/> 
     </munit:test>
     
 </mule>
